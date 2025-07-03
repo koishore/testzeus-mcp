@@ -5,26 +5,40 @@ from datetime import datetime
 from typing import List, Optional
 
 try:
-    from pydantic import BaseModel, Field
+    from pydantic import BaseModel, Field, ConfigDict
 except ImportError:
     # Fallback if pydantic not available
     class BaseModel:
         def __init__(self, **kwargs):
             for key, value in kwargs.items():
                 setattr(self, key, value)
+            if not hasattr(self, 'id'):
+                self.id = str(uuid.uuid4())
+            if not hasattr(self, 'created_at'):
+                self.created_at = datetime.now()
         
         def dict(self):
-            return {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+            result = {}
+            for key, value in self.__dict__.items():
+                if not key.startswith('_'):
+                    if isinstance(value, datetime):
+                        result[key] = value.isoformat()
+                    else:
+                        result[key] = value
+            return result
         
         def model_dump(self):
             return self.dict()
     
     def Field(**kwargs):
         return kwargs.get('default')
+    
+    def ConfigDict(**kwargs):
+        return kwargs
 
 
-class HerculesTestCase(BaseModel):
-    """Represents a test case that can be executed by Hercules."""
+class MCPTestCase(BaseModel):
+    """Test case model - renamed to avoid pytest collection."""
     
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
@@ -34,13 +48,12 @@ class HerculesTestCase(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
     file_path: Optional[str] = None
 
-    class Config:
-        # Avoid pydantic v2 issues
-        arbitrary_types_allowed = True
+    # Use ConfigDict for Pydantic v2 compatibility
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
-class HerculesTestResult(BaseModel):
-    """Represents the result of a test execution."""
+class MCPTestResult(BaseModel):
+    """Test result model - renamed to avoid pytest collection."""
     
     test_id: str
     test_name: str
@@ -52,10 +65,10 @@ class HerculesTestResult(BaseModel):
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
 
-    class Config:
-        arbitrary_types_allowed = True
+    # Use ConfigDict for Pydantic v2 compatibility
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
-# Aliases for backward compatibility and to avoid pytest collection
-TestCase = HerculesTestCase
-TestResult = HerculesTestResult
+# Export with the expected names for backward compatibility
+TestCase = MCPTestCase
+TestResult = MCPTestResult
