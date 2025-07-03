@@ -1,4 +1,5 @@
 // vscode-extension/src/types.ts
+import * as vscode from 'vscode';
 
 export interface TestCase {
     id: string;

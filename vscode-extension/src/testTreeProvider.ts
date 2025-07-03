@@ -45,7 +45,7 @@ export class TestTreeProvider implements vscode.TreeDataProvider<TestTreeItem> {
                 return [new TestTreeItem('Failed to load test cases', vscode.TreeItemCollapsibleState.None, 'error')];
             }
 
-            return response.test_cases.map(testCase => {
+            return response.test_cases.map((testCase: any) => {
                 const item = new TestTreeItem(
                     testCase.name,
                     vscode.TreeItemCollapsibleState.None,
@@ -74,7 +74,7 @@ export class TestTreeProvider implements vscode.TreeDataProvider<TestTreeItem> {
                 return [new TestTreeItem('Failed to load test results', vscode.TreeItemCollapsibleState.None, 'error')];
             }
 
-            return response.results.map(result => {
+            return response.results.map((result: any) => {
                 const item = new TestTreeItem(
                     result.test_name,
                     vscode.TreeItemCollapsibleState.None,

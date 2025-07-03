@@ -50,25 +50,25 @@ async function createTestCase() {
         // Get test details from user
         const name = await vscode.window.showInputBox({
             prompt: 'Test name',
-            placeholder: 'Login Flow Test'
+            placeHolder: 'Login Flow Test'
         });
         if (!name) return;
 
         const description = await vscode.window.showInputBox({
             prompt: 'Test description',
-            placeholder: 'What does this test do?'
+            placeHolder: 'What does this test do?'
         });
         if (!description) return;
 
         const stepsInput = await vscode.window.showInputBox({
             prompt: 'Test steps (comma-separated)',
-            placeholder: 'Step 1, Step 2, Step 3'
+            placeHolder: 'Step 1, Step 2, Step 3'
         });
         if (!stepsInput) return;
 
         const expectedOutcome = await vscode.window.showInputBox({
             prompt: 'Expected outcome',
-            placeholder: 'What should happen?'
+            placeHolder: 'What should happen?'
         });
         if (!expectedOutcome) return;
 
@@ -99,7 +99,7 @@ async function runTest(testId?: string) {
             }
 
             const selected = await vscode.window.showQuickPick(
-                tests.test_cases.map(test => ({
+                tests.test_cases.map((test: any) => ({
                     label: test.name,
                     description: test.description,
                     testId: test.id
@@ -108,7 +108,7 @@ async function runTest(testId?: string) {
             );
 
             if (!selected) return;
-            testId = selected.testId;
+            testId = (selected as any).testId;
         }
 
         vscode.window.showInformationMessage('Running test...');
@@ -139,7 +139,7 @@ async function showResults(testId?: string) {
             }
 
             const selected = await vscode.window.showQuickPick(
-                results.results.map(result => ({
+                results.results.map((result: any) => ({
                     label: result.test_name,
                     description: `${result.status} - ${result.execution_time}s`,
                     testId: result.test_id
@@ -148,7 +148,7 @@ async function showResults(testId?: string) {
             );
 
             if (!selected) return;
-            testId = selected.testId;
+            testId = (selected as any).testId;
         }
 
         const result = await mcpClient.getTestResult(testId!);
